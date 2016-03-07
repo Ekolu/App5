@@ -12,14 +12,6 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        /*
-        self.iconView.layer.cornerRadius = self.iconView.frame.size.width / 2;
-        self.iconView.clipsToBounds = YES;
-        self.iconView.layer.borderWidth = 3.0f;
-        self.iconView.layer.borderColor = [UIColor whiteColor].CGColor;
-        configureButton()
-        */
-
         // Do any additional setup after loading the view, typically from a nib.
         configureButton()
     }
@@ -34,11 +26,53 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
     @IBOutlet weak var addPhotoButton: UIButton!
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
-    //
+    // Initializes variables.
     var list: List?
     var addedImage: UIImage?
     
+    // Adds borders to textView, so it would look prettier.
+    func configureList() {
+        let borderBottom = CALayer()
+        let borderWidth = CGFloat(2.0)
+        borderBottom.borderColor = UIColor.grayColor().CGColor
+        borderBottom.frame = CGRect(x: 0, y: listTextField.frame.height - 1.0, width: listTextField.frame.width , height: listTextField.frame.height - 1.0)
+        borderBottom.borderWidth = borderWidth
+        listTextField.layer.addSublayer(borderBottom)
+        listTextField.layer.masksToBounds = true
+        let borderTop = CALayer()
+        borderTop.borderColor = UIColor.grayColor().CGColor
+        borderTop.frame = CGRect(x: 0, y: 0, width: listTextField.frame.width, height: 1)
+        borderTop.borderWidth = borderWidth
+        listTextField.layer.addSublayer(borderTop)
+        listTextField.layer.masksToBounds = true
+    }
     
+    // Configures addPhoto button so it would be round.
+    func configureButton() {
+        photoButton.layer.cornerRadius = photoButton.bounds.size.width / 2.0
+        photoButton.layer.masksToBounds = true
+        photoButton.layer.borderColor = UIColor(red:0.0/255.0, green:122.0/255.0, blue:255.0/255.0, alpha:1).CGColor as CGColorRef
+        photoButton.layer.borderWidth = 2.0
+        photoButton.clipsToBounds = true
+        photoButton.titleLabel?.textAlignment = NSTextAlignment.Center
+    }
+    
+    // Updates the visuals of screen.
+    override func viewDidLayoutSubviews() {
+        configureButton()
+        configureList()
+    }
+    
+    // Hides keyboard after return key is pressed.
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    // Closes keyboard when an empty area on screen is touched.
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        self.view.endEditing(true)
+    }
     
     // Allows user to add an image from its devices library.
     @IBAction func AddPhotoAction(sender: UIButton) {
@@ -63,44 +97,12 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
         dismissViewControllerAnimated(true, completion: nil)
     }
     
-    // Hides keyboard after return key is pressed.
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
+    // Cancels creation of new list name, goes back to lists scene.
+    @IBAction func Cancel(sender: UIBarButtonItem) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
-    // Closes keyboard when an empty area on screen is touched.
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    func configureList() {
-        let borderBottom = CALayer()
-        let borderWidth = CGFloat(2.0)
-        borderBottom.borderColor = UIColor.grayColor().CGColor
-        borderBottom.frame = CGRect(x: 0, y: listTextField.frame.height - 1.0, width: listTextField.frame.width , height: listTextField.frame.height - 1.0)
-        borderBottom.borderWidth = borderWidth
-        listTextField.layer.addSublayer(borderBottom)
-        listTextField.layer.masksToBounds = true
-        let borderTop = CALayer()
-        borderTop.borderColor = UIColor.grayColor().CGColor
-        borderTop.frame = CGRect(x: 0, y: 0, width: listTextField.frame.width, height: 1)
-        borderTop.borderWidth = borderWidth
-        listTextField.layer.addSublayer(borderTop)
-        listTextField.layer.masksToBounds = true
-    }
-    
-
-    func configureButton() {
-        photoButton.layer.cornerRadius = photoButton.bounds.size.width / 2.0
-        photoButton.layer.masksToBounds = true
-        photoButton.layer.borderColor = UIColor(red:0.0/255.0, green:122.0/255.0, blue:255.0/255.0, alpha:1).CGColor as CGColorRef
-        photoButton.layer.borderWidth = 2.0
-        photoButton.clipsToBounds = true
-        photoButton.titleLabel?.textAlignment = NSTextAlignment.Center
-    }
-    
-    // This method lets you configure a view controller before it's presented.
+    // Passes the variables of list to list scene.
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if saveButton === sender {
             let listName = listTextField.text ?? ""
@@ -109,16 +111,6 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
             list = List(name: listName, image: listImage, array: listArray)
         }
     }
-    
-    @IBAction func Cancel(sender: UIBarButtonItem) {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        configureButton()
-        configureList()
-    }
-
 }
 
 

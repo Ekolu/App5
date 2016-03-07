@@ -12,6 +12,8 @@ class ListTableViewCell: UITableViewCell {
     
     @IBOutlet weak var listTextView: UITextView!
     @IBOutlet weak var listImageView: UIImageView!
+    
+    
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -20,6 +22,12 @@ class ListTableViewCell: UITableViewCell {
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+        // Makes image display in cell to be round.
+        listImageView.layer.borderWidth = 1
+        listImageView.layer.masksToBounds = false
+        listImageView.layer.borderColor = UIColor.whiteColor().CGColor
+        listImageView.layer.cornerRadius = listImageView.frame.height/2
+        listImageView.clipsToBounds = true
 
         // Configure the view for the selected state
     }

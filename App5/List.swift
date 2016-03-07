@@ -8,24 +8,18 @@
 
 import UIKit
 
+// Creates a class for List, which has a name, an image and an array of elements.
 class List {
     
     var listName: String
     var listImage: UIImage?
     var listArray = [String]()
     
-    // MARK: Initialization
-    
     init?(name: String, image: UIImage?, array: [String]) {
         // Initialize stored properties.
         self.listName = name
         self.listImage = image
         self.listArray = array
-        
-        // Initialization should fail if there is no name or if the rating is negative.
-        if listName.isEmpty {
-            return nil
-        }
     }
     
 }

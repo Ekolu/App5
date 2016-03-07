@@ -8,10 +8,12 @@
 
 import UIKit
 
-class ListTableViewController: UITableViewController {
+class ListTableViewController: UITableViewController, PresentedViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.estimatedRowHeight = 43
+        self.tableView.rowHeight = UITableViewAutomaticDimension
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -25,13 +27,29 @@ class ListTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    
     // Declaring variables.
     var userListInput = [List]()
+    var pathOfIndex: NSIndexPath!
+    
+    // Putting the data transfered by delegate into an array of List objects.
+    func acceptData(data: AnyObject!) {
+        print("ACCEPTING DATA")
+        self.userListInput[pathOfIndex.row].listArray = data as! [String]
+        print(userListInput[pathOfIndex.row].listArray)
+    }
+    
+    // When cell which contains list's name is pressed, elements scene is displayed and delegate transfers an array of said list's elements to it.
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let pvc = storyboard?.instantiateViewControllerWithIdentifier("ElementViewController") as! ElementViewController
+        print("SENDING DATA")
+        pvc.data = userListInput[indexPath.row].listArray
+        pathOfIndex = indexPath
+        print(userListInput[pathOfIndex.row].listArray)
+        pvc.delegate = self
+        self.presentViewController(pvc, animated: true, completion: nil)
+    }
 
-    // MARK: - Table view data source
-
+    // Sets number of sections in a cell.
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
@@ -45,19 +63,15 @@ class ListTableViewController: UITableViewController {
     // Creates cell.
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cellIdentifier = "ListTableViewCell"
-        
         let cell = self.tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! ListTableViewCell
-        
         let list = userListInput[indexPath.row]
-        
         cell.listTextView.text = list.listName
         print(list.listName)
         cell.listImageView.image = list.listImage
-        // Disables scrolling, so that textview would expand if there is a lot of input instead of allowing scrolling.
+        // Disables scrolling.
         cell.listTextView.scrollEnabled = false
         // Disables textView editing.
         cell.listTextView.editable = false
-        
         return cell
     }
 
@@ -106,6 +120,7 @@ class ListTableViewController: UITableViewController {
     }
     */
     
+    // Transfers data of new List object to lists scene when "save" button is pressed in CreateEdit scene.
     @IBAction func unwindToCreateEditViewController(sender: UIStoryboardSegue) {
         if let sourceViewController = sender.sourceViewController as? CreateEditViewController, list = sourceViewController.list {
             let newIndexPath = NSIndexPath(forRow: userListInput.count, inSection: 0)
@@ -113,25 +128,6 @@ class ListTableViewController: UITableViewController {
             tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Bottom)
         }
     }
-    
-
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "showElement" {
-            let counter = segue.destinationViewController as! ElementViewController
-            
-            // Get the cell that generated this segue.
-            if let selectedListCell = sender as? ListTableViewCell {
-                let indexPath = tableView.indexPathForCell(selectedListCell)!
-                let selectedList = userListInput[indexPath.row].listArray
-                counter.userInput = selectedList
-                counter.pathOfIndex = indexPath
-            }
-        }
-
-    }
-
-    
     
 
 }
