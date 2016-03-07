@@ -14,6 +14,10 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         super.viewDidLoad()
         self.tableView.estimatedRowHeight = 43
         self.tableView.rowHeight = UITableViewAutomaticDimension
+        if let savedLists = loadLists() {
+            userListInput += savedLists
+        }
+        navigationItem.leftBarButtonItem = editButtonItem()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -75,25 +79,23 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         return cell
     }
 
-    /*
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
-    */
 
-    /*
     // Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             // Delete the row from the data source
+            userListInput.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            saveLists()
         } else if editingStyle == .Insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
 
     /*
     // Override to support rearranging the table view.
@@ -123,11 +125,26 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
     // Transfers data of new List object to lists scene when "save" button is pressed in CreateEdit scene.
     @IBAction func unwindToCreateEditViewController(sender: UIStoryboardSegue) {
         if let sourceViewController = sender.sourceViewController as? CreateEditViewController, list = sourceViewController.list {
+            /*if let selectedIndexPath = tableView.indexPathForSelectedRow {
+                userListInput[selectedIndexPath.row] = list
+                tableView.reloadRowsAtIndexPaths([selectedIndexPath], withRowAnimation: .None)
+            }
+            else {*/
             let newIndexPath = NSIndexPath(forRow: userListInput.count, inSection: 0)
             userListInput.append(list)
             tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Bottom)
+            saveLists()
         }
     }
     
-
+    // MARK: NSCoding
+    func saveLists() {
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(userListInput, toFile: List.ArchiveURL.path!)
+        if !isSuccessfulSave {
+            print("Failed to save lists...")
+        }
+    }
+    func loadLists() -> [List]? {
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(List.ArchiveURL.path!) as? [List]
+    }
 }

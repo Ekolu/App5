@@ -99,7 +99,14 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
     
     // Cancels creation of new list name, goes back to lists scene.
     @IBAction func Cancel(sender: UIBarButtonItem) {
-        dismissViewControllerAnimated(true, completion: nil)
+        // Depending on style of presentation (modal or push presentation), this view controller needs to be dismissed in two different ways.
+        let isPresentingInAddMode = presentingViewController is UINavigationController
+        if isPresentingInAddMode {
+            dismissViewControllerAnimated(true, completion: nil)
+        }
+        else {
+            navigationController!.popViewControllerAnimated(true)
+        }
     }
     
     // Passes the variables of list to list scene.
