@@ -120,10 +120,11 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
         }
     }
     
-    // Passes the variables of list to list scene.
+    // Passes the variables of the list to list scene.
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if saveButton === sender {
             let isPresentingInAddMode = presentingViewController is UINavigationController
+            // When creatinng new list.
             if isPresentingInAddMode {
                 print("Adding")
                 let listName = listTextField.text ?? ""
@@ -131,8 +132,8 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
                 let listArray = [String]()
                 list = List(name: listName, image: listImage, array: listArray)
             }
+            // When editing.
             else {
-                print("Editing")
                 let listName = listTextField.text ?? ""
                 let listImage = addedImage
                 let listArray = list?.listArray

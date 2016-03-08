@@ -31,6 +31,8 @@ class ElementViewController: UIViewController, UITableViewDelegate, UITableViewD
         border.borderWidth = width
         fakeNavigationBar.layer.addSublayer(border)
         fakeNavigationBar.layer.masksToBounds = true
+        // Sets the name of the list in fake nav bar
+        self.nameListLabel.text = label
     }
     
     override func didReceiveMemoryWarning() {
@@ -38,7 +40,6 @@ class ElementViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
-
     @IBOutlet weak var fakeNavigationBar: UIView!
     @IBOutlet weak var nameListLabel: UILabel!
     @IBOutlet weak var backButton: UIButton!
@@ -50,6 +51,7 @@ class ElementViewController: UIViewController, UITableViewDelegate, UITableViewD
     // Declaring variables.
     var delegate : PresentedViewControllerDelegate?
     var data = [String] ()
+    var label: String!
     
     // Dismisses element scene when back button is pressed.
     @IBAction func doDismiss(sender: UIButton) {

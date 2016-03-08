@@ -49,7 +49,8 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         print("SENDING DATA")
         pvc.data = userListInput[indexPath.row].listArray
         pathOfIndex = indexPath
-        print(userListInput[pathOfIndex.row].listArray)
+        print("PRINTING \(userListInput[indexPath.row].listName)")
+        pvc.label = userListInput[indexPath.row].listName
         pvc.delegate = self
         self.presentViewController(pvc, animated: true, completion: nil)
     }
@@ -79,8 +80,6 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         cell.listTextView.editable = false
         return cell
     }
-    
-    
 
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -88,8 +87,6 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         return true
     }
     
-    
-
     /*// Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
@@ -102,23 +99,23 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         }    
     }*/
     
+    // Creates edit and delete button in row action.
     override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
-        
+        // When delete button is pressed, deletes list from array and deletes row
         let deleteClosure = { (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
-                self.userListInput.removeAtIndex(indexPath.row)
-                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-                self.saveLists()
+            self.userListInput.removeAtIndex(indexPath.row)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            self.saveLists()
         }
-        
+        // When edit button is pressed, brings out Edit/Create scene.
         let editClosure = { (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
             self.cellEditIndex = indexPath
             tableView.setEditing(false, animated: true)
             self.performSegueWithIdentifier("editList", sender: self)
         }
-        
+        // Buttons for delete and edit in row action.
         let deleteAction = UITableViewRowAction(style: .Default, title: "Delete", handler: deleteClosure)
         let editAction = UITableViewRowAction(style: .Normal, title: "Edit", handler: editClosure)
-        
         return [deleteAction, editAction]
     }
 
@@ -166,6 +163,7 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         }
     }
     
+    // Prepares elements array to be sent to Elements scene.
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "editList" {
             let listDetailViewController = segue.destinationViewController as! CreateEditViewController
