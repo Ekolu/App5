@@ -14,6 +14,17 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         configureButton()
+        if let list = list {
+            navigationItem.title = list.listName
+            listTextField.text   = list.listName
+            addedImage = list.listImage
+        }
+        
+        // Configures photo button display to account for edit behaviour.
+        if addedImage != nil {
+            addPhotoButton.setBackgroundImage(addedImage, forState: UIControlState.Normal)
+            addPhotoButton.setTitle("", forState: UIControlState.Normal)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -88,7 +99,7 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
         dismissViewControllerAnimated(true, completion: nil)
     }
     
-    // Displays the selected image as button background.
+    // Selects the image and displays it as button background.
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         addPhotoButton.setTitle("", forState: UIControlState.Normal)
         let selectedImage = info[UIImagePickerControllerOriginalImage] as! UIImage
@@ -112,10 +123,21 @@ class CreateEditViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // Passes the variables of list to list scene.
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if saveButton === sender {
-            let listName = listTextField.text ?? ""
-            let listImage = addedImage
-            let listArray = [String]()
-            list = List(name: listName, image: listImage, array: listArray)
+            let isPresentingInAddMode = presentingViewController is UINavigationController
+            if isPresentingInAddMode {
+                print("Adding")
+                let listName = listTextField.text ?? ""
+                let listImage = addedImage
+                let listArray = [String]()
+                list = List(name: listName, image: listImage, array: listArray)
+            }
+            else {
+                print("Editing")
+                let listName = listTextField.text ?? ""
+                let listImage = addedImage
+                let listArray = list?.listArray
+                list = List(name: listName, image: listImage, array: listArray!)
+            }
         }
     }
 }

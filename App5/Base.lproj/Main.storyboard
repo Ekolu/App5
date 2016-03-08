@@ -67,6 +67,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="editList" id="szS-nD-6xB"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gme-XD-tkR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -187,7 +190,7 @@ photo</string>
         <!--Navigation Controller-->
         <scene sceneID="8vG-04-DUk">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="TVI-fX-jdQ" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="CreateEditNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="TVI-fX-jdQ" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="7JA-Yw-ENt">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -327,7 +330,10 @@ photo</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="90a-Cc-Mxd" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1183" y="274"/>
+            <point key="canvasLocation" x="1260" y="290"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="szS-nD-6xB"/>
+    </inferredMetricsTieBreakers>
 </document>

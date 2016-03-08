@@ -34,6 +34,7 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
     // Declaring variables.
     var userListInput = [List]()
     var pathOfIndex: NSIndexPath!
+    var cellEditIndex: NSIndexPath!
     
     // Putting the data transfered by delegate into an array of List objects.
     func acceptData(data: AnyObject!) {
@@ -78,14 +79,18 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         cell.listTextView.editable = false
         return cell
     }
+    
+    
 
     // Override to support conditional editing of the table view.
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
+    
+    
 
-    // Override to support editing the table view.
+    /*// Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             // Delete the row from the data source
@@ -95,6 +100,26 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
         } else if editingStyle == .Insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
+    }*/
+    
+    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+        
+        let deleteClosure = { (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
+                self.userListInput.removeAtIndex(indexPath.row)
+                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+                self.saveLists()
+        }
+        
+        let editClosure = { (action: UITableViewRowAction!, indexPath: NSIndexPath!) -> Void in
+            self.cellEditIndex = indexPath
+            tableView.setEditing(false, animated: true)
+            self.performSegueWithIdentifier("editList", sender: self)
+        }
+        
+        let deleteAction = UITableViewRowAction(style: .Default, title: "Delete", handler: deleteClosure)
+        let editAction = UITableViewRowAction(style: .Normal, title: "Edit", handler: editClosure)
+        
+        return [deleteAction, editAction]
     }
 
     /*
@@ -125,17 +150,33 @@ class ListTableViewController: UITableViewController, PresentedViewControllerDel
     // Transfers data of new List object to lists scene when "save" button is pressed in CreateEdit scene.
     @IBAction func unwindToCreateEditViewController(sender: UIStoryboardSegue) {
         if let sourceViewController = sender.sourceViewController as? CreateEditViewController, list = sourceViewController.list {
-            /*if let selectedIndexPath = tableView.indexPathForSelectedRow {
-                userListInput[selectedIndexPath.row] = list
+            // Update an existing list.
+            if let selectedIndexPath = cellEditIndex {
+                userListInput[cellEditIndex.row] = list
                 tableView.reloadRowsAtIndexPaths([selectedIndexPath], withRowAnimation: .None)
+                cellEditIndex = nil
             }
-            else {*/
-            let newIndexPath = NSIndexPath(forRow: userListInput.count, inSection: 0)
-            userListInput.append(list)
-            tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Bottom)
+            // Add new list.
+            else {
+                let newIndexPath = NSIndexPath(forRow: userListInput.count, inSection: 0)
+                userListInput.append(list)
+                tableView.insertRowsAtIndexPaths([newIndexPath], withRowAnimation: .Bottom)
+            }
             saveLists()
         }
     }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "editList" {
+            let listDetailViewController = segue.destinationViewController as! CreateEditViewController
+            let selectedList = userListInput[cellEditIndex.row]
+            listDetailViewController.list = selectedList
+            }
+        else if segue.identifier == "addList" {
+            print("Adding new list.")
+        }
+    }
+
     
     // MARK: NSCoding
     func saveLists() {
